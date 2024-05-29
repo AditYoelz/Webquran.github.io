@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Quran</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/amiri.css);
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #DCD6F7, #A6B1E1, #424874);
+            color: #000000;
+        }
+        .container-fluid {
+            padding: 20px;
+        }
+        .list-group-item {
+            background-color: #F4EEFF;
+            border: none;
+            color: #000000;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+        .list-group-item:hover {
+            background-color: #A6B1E1;
+        }
+        .text-container {
+            background: linear-gradient(to right, #DCD6F7, #A6B1E1, #424874);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            max-height: 80vh;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .text-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        .text-container::-webkit-scrollbar-thumb {
+            background-color: #A6B1E1;
+            border-radius: 10px;
+        }
+        .text-container::-webkit-scrollbar-track {
+            background-color: #424874;
+            border-radius: 10px;
+        }
+        .text-container .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: #000000;
+            margin-bottom: 5px;
+        }
+        .text-container .list-group-item a {
+            color: #000000;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .text-container .list-group-item a:hover {
+            color: #A6B1E1;
+        }
+        footer {
+            background-color: rgba(52, 72, 116, 0.5);
+            color: #000000;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .audio-control {
+            color: #000000;
+            border: none;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .audio-control:hover {
+            transform: scale(1.1);
+        }
+        .ayah-number {
+            font-size: 0.8em;
+            margin-right: 5px;
+            color: #000000;
+        }
+        .ayah-meaning {
+            font-size: 0.9em;
+            color: #000000;
+        }
+        .surah-background {
+            background: linear-gradient(to right, #F4EEFF, #DCD6F7, #A6B1E1, #424874);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+        .col-md-4 {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+   
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+       
+        ::-webkit-scrollbar-thumb {
+            background-color: #A6B1E1;
+            border-radius: 10px;
+        }
+       
+        ::-webkit-scrollbar-track {
+            background-color: #424874;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container-fluid">
+            <!-- Hapus Search Bar -->
+        </div>
+    </header>
+    <main id="maincontent" class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <div
+                        class="list-group shadow p-3 mb-5 rounded"
+                        id="daftar-surah"
+                    ></div>
+                </div>
+                <div class="col-md-8">
+                    <div
+                        class="text-container shadow p-3 rounded"
+                        id="text-arabic"
+                    >
+                        Silakan klik daftar surah
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>&copy; 2023 Web Quran</footer>
+
+    <!-- Script JavaScript -->
+    <script>
+        const BASE_URL = "https://equran.id/api/v2";
+        const quranSurah = async () => {
+            const endpoint = `${BASE_URL}/surat`;
+            const response = await fetch(endpoint);
+            const data = await response.json();
+            return data.data;
+        };
+        const quranDetail = async (nomor) => {
+            const endpoint = `${BASE_URL}/surat/${nomor}`;
+            const response = await fetch(endpoint);
+            const data = await response.json();
+            console.log(data.data);
+            return data.data;
+        };
+
+        quranSurah().then((surat) => {
+            surat.forEach((surah) => {
+                const list = `<div class="surah-background">
+                    <a href="#" class="list-group-item
+                    list-group-item-action" id="surah-${surah.nomor}">
+                    ${surah.nomor} - ${surah.namaLatin} (${surah.nama}) - ${surah.arti}
+                    </a>
+                    </div>`;
+                document.querySelector("#daftar-surah").insertAdjacentHTML("beforeend", list);
+
+                document.querySelector(`#surah-${surah.nomor}`).addEventListener("click", function (event) {
+                    event.preventDefault();
+                    document.querySelector(`#text-arabic`).innerHTML = "";
+                    quranDetail(surah.nomor).then((ayat) => {
+                        ayat.ayat.forEach((ayah) => {
+                            const ayatHTML = `<div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-1 ayah-number">${ayah.nomorAyat}</div>
+                                    <div class="col-10 amiri">${ayah.teksArab}</div>
+                                    <div class="col-1">
+                                        <button class="audio-control" onclick="playAudio('${ayah.audio['01']}')"><i class="fa fa-play"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 ayah-meaning">${ayah.teksIndonesia}</div>
+                                </div>
+                            </div>`;
+                            document.querySelector(`#text-arabic`).insertAdjacentHTML("beforeend", ayatHTML);
+                        });
+                    });
+                });
+            });
+        });
+
+        function playAudio(url) {
+            const audio = new Audio(url);
+            audio.play();
+        }
+
+        function searchSurah() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toUpperCase();
+            const surahs = document.getElementById("daftar-surah");
+            const surahItems = surahs.getElementsByClassName("list-group-item");
+            for (let i = 0; i < surahItems.length; i++) {
+                const a = surahItems[i].getElementsByTagName("a")[0];
+                const txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    surahItems[i].style.display = "";
+                } else {
+                    surahItems[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
